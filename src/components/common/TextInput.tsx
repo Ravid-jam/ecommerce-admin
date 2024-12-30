@@ -1,6 +1,7 @@
-import { TextField } from "@mui/material";
+import { TextField, TextFieldProps } from "@material-ui/core";
+import { forwardRef } from "react";
 
-const TextInput = (props: any) => {
+const TextInput = forwardRef<HTMLDivElement, TextFieldProps>((props, ref) => {
   const {
     label,
     name,
@@ -17,6 +18,7 @@ const TextInput = (props: any) => {
 
   return (
     <TextField
+      ref={ref}
       label={label}
       name={name}
       value={value}
@@ -30,6 +32,6 @@ const TextInput = (props: any) => {
       {...otherProps}
     />
   );
-};
+});
 
 export default TextInput;

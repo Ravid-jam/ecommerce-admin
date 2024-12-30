@@ -17,7 +17,7 @@ import Swal from "sweetalert2";
 import * as yup from "yup";
 import TextInput from "../common/TextInput";
 import AuthServices from "../services/AuthServices";
-import { setUserData, store } from "../services/pulState/store";
+import { setUserData } from "../services/pulState/store";
 const schema = yup
   .object({
     email: yup.string().required(),
@@ -28,7 +28,6 @@ const schema = yup
 type loginData = yup.InferType<typeof schema>;
 
 export default function Login() {
-  const isSuccess = store.useState((s) => s.isErrorMessage);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const {
