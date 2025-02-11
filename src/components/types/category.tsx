@@ -1,14 +1,22 @@
 export default interface ICategory {
   _id?: string;
-  categoryImage?: string;
-  categoryTitle?: string;
-  Date?: string;
+  name?: string;
+  status: string;
+  createdAt?: any;
+  image: {
+    id: string;
+    url: string;
+  };
 }
 
 export default interface ISubCategory {
   _id?: string;
-  subCategoryImage?: string;
-  subCategoryTitle: string;
-  categoryId: string;
-  Date?: string;
+  name?: string;
+  status: string;
+  category: ICategory;
+  image: {
+    id: string;
+    url: string;
+  };
+  createdAt?: any;
 }

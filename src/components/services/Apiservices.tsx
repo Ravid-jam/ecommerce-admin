@@ -1,10 +1,12 @@
 import config from "@/components/config";
 import ICarousel from "../types/carousel";
+import {
+  default as ICategory,
+  default as ISubCategory,
+} from "../types/category";
+import { IColor, ISize } from "../types/colorAndSize";
 import IProducts from "../types/products";
 import HttpService from "./HttpService";
-import ISubCategory from "../types/category";
-import ICategory from "../types/category";
-import { IColor, ISize } from "../types/colorAndSize";
 class ApiServices {
   static register(data: any) {
     return HttpService.post(`${config.API_URL}/admin/register`, data);
@@ -59,7 +61,7 @@ class ApiServices {
 
   static async addCategory(data?: ICategory) {
     let res = await HttpService.post(
-      `${config.API_URL}/api/addCategory`,
+      `${config.API_URL}/api/category/addCategory`,
       data,
       localStorage.token
     );
@@ -68,7 +70,7 @@ class ApiServices {
 
   static async getLstCategory() {
     let res = await HttpService.get(
-      `${config.API_URL}/api/getCategory`,
+      `${config.API_URL}/api/category/getCategory`,
       localStorage.token
     );
     return res.data;
@@ -76,7 +78,7 @@ class ApiServices {
 
   static async getLstSubCategory() {
     let res = await HttpService.get(
-      `${config.API_URL}/api/getSubCategory`,
+      `${config.API_URL}/api/category/getSubCategory`,
       localStorage.token
     );
     return res.data;
@@ -84,7 +86,7 @@ class ApiServices {
 
   static async updateCategory(data?: ICategory, _id?: string) {
     let res = await HttpService.put(
-      `${config.API_URL}/api/updateCategory/${_id}`,
+      `${config.API_URL}/api/category/updateCategory/${_id}`,
       data,
       localStorage.token
     );
@@ -100,8 +102,8 @@ class ApiServices {
   }
 
   static async deleteCategory(_id?: string) {
-    let res = await HttpService.get(
-      `${config.API_URL}/api/deleteCategory/${_id}`,
+    let res = await HttpService.delete(
+      `${config.API_URL}/api/category/deleteCategory/${_id}`,
       localStorage.token
     );
     return res;
@@ -109,7 +111,7 @@ class ApiServices {
 
   static async addSubCategory(data?: ISubCategory) {
     let res = await HttpService.post(
-      `${config.API_URL}/api/addSubCategory`,
+      `${config.API_URL}/api/category/addSubCategory`,
       data,
       localStorage.token
     );
@@ -118,7 +120,7 @@ class ApiServices {
 
   static async updateSubCategory(data?: ISubCategory, _id?: string) {
     let res = await HttpService.put(
-      `${config.API_URL}/api/updateSubCategory/${_id}`,
+      `${config.API_URL}/api/category/updateSubCategory/${_id}`,
       data,
       localStorage.token
     );
@@ -126,8 +128,8 @@ class ApiServices {
   }
 
   static async deleteSubCategory(_id?: string) {
-    let res = await HttpService.get(
-      `${config.API_URL}/api/deleteSubCategory/${_id}`,
+    let res = await HttpService.delete(
+      `${config.API_URL}/api/category/deleteSubCategory/${_id}`,
       localStorage.token
     );
     return res;
@@ -169,7 +171,7 @@ class ApiServices {
 
   static async getLstProduct() {
     let res = await HttpService.get(
-      `${config.API_URL}/api/getProduct`,
+      `${config.API_URL}/api/product/getAllProducts`,
       localStorage.token
     );
     return res.data;

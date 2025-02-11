@@ -4,41 +4,24 @@ import CancelRoundedIcon from "@mui/icons-material/CancelRounded";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SaveIcon from "@mui/icons-material/Save";
 import { LoadingButton } from "@mui/lab";
-import {
-  Autocomplete,
-  FormControl,
-  FormHelperText,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { Autocomplete, FormHelperText, Grid, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import styled from "styled-components";
-import Swal from "sweetalert2";
 import * as yup from "yup";
 import CommonModel from "../common/CommonModel";
+import RichTextEditor from "../common/RichTextEditor";
+import SelectField from "../common/SelectField";
+import TextInput from "../common/TextInput";
 import ApiServices from "../services/Apiservices";
 import {
-  setIsLoading,
-  setSuccess,
-  setSuccessMessage,
-  store,
-} from "../services/pulState/store";
-import {
-  useAddProduct,
   useCategoryList,
   useSubCategoryList,
-  useUpdateProduct,
 } from "../services/query/ApiHandlerQuery";
-import {
-  default as ICategory,
-  default as ISubCategory,
-} from "../types/category";
+import { default as ICategory } from "../types/category";
 import IProducts from "../types/products";
 
 const VisuallyHiddenInput = styled("input")({
@@ -64,19 +47,43 @@ export interface IFormProduct {
   images: any[];
 }
 
-const schema = yup
-  .object({
-    title: yup.string().required(),
-    slug: yup.string().required(),
-    category: yup.string().required(),
-    subCategory: yup.string().required(),
-    description: yup.string().required(),
-    color: yup.array().min(1, "At least one color is required").required(),
-    size: yup.array().min(1, "At least one size is required").required(),
-    price: yup.number().required("price is required"),
-    images: yup.array().min(1, "At least one image is required").required(),
-  })
-  .required();
+const productSchema = yup.object().shape({
+  title: yup.string().required("Title is required"),
+  slug: yup.string().required("Slug is required"),
+  price: yup
+    .number()
+    .required("Price is required")
+    .min(0, "Price must be greater than 0"),
+  discount: yup
+    .number()
+    .min(0, "Discount must be a positive number")
+    .max(100, "Discount cannot be more than 100"),
+
+  category: yup.string().required("Category is required"),
+  subcategory: yup.string().required("Subcategory is required"),
+  brandName: yup.string().required("Brand Name is required"),
+  returnPolicy: yup.string().required("Return Policy is required"),
+  brandDetails: yup.string().required("Brand Details is required"),
+  shipping: yup.string().required("Shipping details are required"),
+  productDetail: yup.string().required("Product Details are required"),
+  color: yup.string(),
+  offers: yup.array().of(yup.string()),
+  size: yup.array().of(
+    yup.object().shape({
+      name: yup.string().required("Size name is required"),
+      availableStock: yup
+        .number()
+        .required("Available stock is required")
+        .min(0, "Available stock must be a positive number"),
+    })
+  ),
+  images: yup
+    .array()
+    .min(1, "At least one image is required")
+    .required("images must be provided"),
+
+  stock: yup.number().min(0, "Stock cannot be less than 0"),
+});
 
 interface IAddUpdateCarouselProps {
   open: boolean;
@@ -88,9 +95,7 @@ interface IAddUpdateCarouselProps {
 
 export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
   const { open, setOpen, ObjProduct, isEdit, setIsEdit } = props;
-  const [singleFile, setSingleFile] = React.useState<any>([]);
 
-  const isLoading = store.useState((s) => s.isLoading);
   const lstCategory = useCategoryList();
   const lstSubCategory = useSubCategoryList();
   const [selectColor, setSelectColor] = React.useState<any>("");
@@ -98,13 +103,9 @@ export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
   const [lstsizes, setLstSizes] = React.useState<any>("");
   const [selectSizes, setSelectSizes] = React.useState<any>("");
   const [images, setImages] = React.useState<any>([]);
-  const [state, setState] = React.useState<any>({
-    file: null,
-    base64URL: "",
-  });
 
-  const objForm = useForm<IFormProduct>({
-    resolver: yupResolver(schema),
+  const objForm = useForm({
+    resolver: yupResolver(productSchema),
   });
 
   const handleFileInputChange = async (
@@ -121,8 +122,8 @@ export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
 
       setImages((prev: any) => {
         const updatedImages = [...prev, ...newImages];
-        objForm.setValue("images", updatedImages); // Update form value
-        objForm.clearErrors("images"); // Clear validation errors
+        objForm.setValue("images", updatedImages);
+        objForm.clearErrors("images");
         return updatedImages;
       });
     }
@@ -156,41 +157,36 @@ export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
   }, []);
 
   const onSubmit = async (data: any) => {
-    const result = {
-      ...data,
-      images: images,
-    };
-    try {
-      if (isEdit) {
-        setIsLoading(true);
-        const edit = await useUpdateProduct(result, ObjProduct?._id);
-        setIsLoading(false);
-        setOpen(false);
-        setSuccess(true);
-        setSuccessMessage(edit.message);
-      } else {
-        setIsLoading(true);
-        const res = await useAddProduct(result);
-        setIsLoading(false);
-        setOpen(false);
-        setSuccess(true);
-        setSuccessMessage(res.message);
-      }
-    } catch (error: any) {
-      setOpen(false);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: `${error.message}`,
-      });
-    }
+    console.log(data);
+    // try {
+    //   if (isEdit) {
+    //     setIsLoading(true);
+    //     const edit = await useUpdateProduct(data, ObjProduct?._id);
+    //     setIsLoading(false);
+    //     setOpen(false);
+    //     setSuccess(true);
+    //     setSuccessMessage(edit.message);
+    //   } else {
+    //     setIsLoading(true);
+    //     const res = await useAddProduct(data);
+    //     setIsLoading(false);
+    //     setOpen(false);
+    //     setSuccess(true);
+    //     setSuccessMessage(res.message);
+    //   }
+    // } catch (error: any) {
+    //   setOpen(false);
+    //   Swal.fire({
+    //     icon: "error",
+    //     title: "Oops...",
+    //     text: `${error.message}`,
+    //   });
+    // }
   };
 
-  // React.useEffect(() => {
-  //   objForm.reset({
-  //     size: selectSizes,
-  //   });
-  // }, [selectSizes]);
+  const categoryValue = objForm.watch("category");
+  console.log(objForm.formState.errors);
+  console.log(categoryValue);
   return (
     <div>
       <CommonModel
@@ -215,7 +211,7 @@ export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
                 variant="outlined"
                 {...objForm.register("title")}
                 error={!!objForm.formState.errors.title}
-                helperText={objForm.formState.errors.title?.message}
+                helperText={objForm?.formState?.errors?.title?.message || ""}
               />
             </Grid>
             <Grid item xs={6}>
@@ -227,80 +223,228 @@ export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
                 variant="outlined"
                 {...objForm.register("slug")}
                 error={objForm.formState.errors.slug ? true : false}
-                helperText={objForm.formState.errors.slug?.message}
+                helperText={objForm.formState.errors.slug?.message || ""}
               />
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">Category</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Category"
-                  {...objForm.register("category")}
-                  multiline
-                  defaultValue={ObjProduct?.category}
-                  error={objForm.formState.errors.category ? true : false}
-                >
-                  {lstCategory.data &&
-                    lstCategory.data.map((item: ICategory, index: number) => (
-                      <MenuItem value={item._id} key={index}>
-                        {item.categoryTitle}
-                      </MenuItem>
-                    ))}
-                </Select>
-                <FormHelperText style={{ color: "red" }}>
-                  {objForm.formState.errors?.category?.message}
-                </FormHelperText>
-              </FormControl>
+              <SelectField
+                label="Category"
+                id="category-select"
+                options={lstCategory?.data?.map((item: ICategory) => ({
+                  value: item._id,
+                  label: item.name,
+                }))}
+                {...objForm.register("category")}
+                error={objForm.formState.errors.category ? true : false}
+                helperText={objForm.formState.errors?.category?.message}
+              />
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">
-                  Sub Category
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="SubCategory"
-                  {...objForm.register("subCategory")}
-                  multiline
-                  defaultValue={ObjProduct?.subCategory}
-                  error={objForm.formState.errors.subCategory ? true : false}
-                >
-                  {lstSubCategory.data &&
-                    lstSubCategory.data.map(
-                      (item: ISubCategory, index: number) => (
-                        <MenuItem value={item._id} key={index}>
-                          {item.subCategoryTitle}
-                        </MenuItem>
-                      )
-                    )}
-                </Select>
-                <FormHelperText style={{ color: "red" }}>
-                  {objForm.formState.errors?.subCategory?.message}
-                </FormHelperText>
-              </FormControl>
+              <SelectField
+                label="Sub Category"
+                id="category-select"
+                disabled={categoryValue ? false : true}
+                options={lstSubCategory?.data
+                  ?.filter((i: any) => i.category._id === categoryValue)
+                  .map((item: any) => ({
+                    value: item._id,
+                    label: item.name,
+                  }))}
+                {...objForm.register("subcategory")}
+                error={objForm.formState.errors.subcategory ? true : false}
+                helperText={objForm.formState.errors?.subcategory?.message}
+              />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                autoFocus
-                margin="dense"
+
+            <Grid item xs={12} marginBottom={7}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 7,
+                }}
+              >
+                <Typography variant="inherit" color={"black"}>
+                  Product Details
+                </Typography>
+                <Controller
+                  name="brandDetails"
+                  control={objForm.control}
+                  // defaultValue={objAbout?.section1 ? objAbout?.section1 : ""}
+                  rules={{ required: true }} // Apply validation rules
+                  render={({ field }) => <RichTextEditor field={field} />}
+                />
+              </div>
+            </Grid>
+            <Grid item xs={6}>
+              <TextInput
                 id="name"
-                label="Description"
+                label="Brand Name"
                 type="text"
                 fullWidth
                 variant="outlined"
-                multiline
-                minRows={5}
-                {...objForm.register("description")}
-                defaultValue={ObjProduct?.description}
-                error={objForm.formState.errors.description ? true : false}
-                helperText={objForm.formState.errors.description?.message}
+                {...objForm.register("brandName")}
+                error={objForm.formState.errors.brandName ? true : false}
+                // defaultValue={ObjProduct?.brandName}
+                helperText={
+                  objForm.formState.errors.brandName
+                    ? objForm.formState.errors.brandName.message
+                    : ""
+                }
               />
             </Grid>
 
             <Grid item xs={6}>
+              <TextInput
+                id="name"
+                label="Price"
+                type="number"
+                fullWidth
+                variant="outlined"
+                {...objForm.register("price")}
+                error={objForm.formState.errors.price ? true : false}
+                defaultValue={ObjProduct?.price}
+                helperText={
+                  objForm.formState.errors.price
+                    ? objForm.formState.errors.price.message
+                    : ""
+                }
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextInput
+                label="Discount"
+                fullWidth
+                variant="outlined"
+                type="number"
+                {...objForm.register("discount")}
+                error={!!objForm.formState.errors.discount}
+                helperText={objForm.formState.errors.discount?.message}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                startIcon={<CloudUploadIcon />}
+              >
+                select Multiple Image
+                <VisuallyHiddenInput
+                  type="file"
+                  onChange={handleFileInputChange}
+                  multiple
+                />
+              </Button>
+              {objForm.formState.errors.images && (
+                <FormHelperText style={{ color: "red" }}>
+                  {objForm.formState.errors.images.message}
+                </FormHelperText>
+              )}
+            </Grid>
+            <Grid item xs={6}>
+              <Autocomplete
+                size="medium"
+                multiple
+                id="tags-outlined-color"
+                options={lstColor || []}
+                getOptionLabel={(option: any) => option.colorName || ""}
+                filterSelectedOptions
+                value={Array.isArray(selectColor) ? selectColor : []}
+                onChange={(_, data: any) => {
+                  setSelectColor(data || []);
+                  objForm.setValue("color", data || []);
+                  objForm.clearErrors("color");
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Color"
+                    placeholder="Select Color"
+                    error={!!objForm.formState.errors.color}
+                    helperText={objForm.formState.errors.color?.message}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <Autocomplete
+                size="medium"
+                multiple
+                id="tags-outlined-size"
+                options={lstsizes || []}
+                getOptionLabel={(option: any) => option.sizeName || ""}
+                filterSelectedOptions
+                value={Array.isArray(selectSizes) ? selectSizes : []}
+                onChange={(_, data: any) => {
+                  setSelectSizes(data || []);
+                  objForm.setValue("size", data || []);
+                  objForm.clearErrors("size");
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Size"
+                    placeholder="Select Size"
+                    error={!!objForm.formState.errors.size}
+                    helperText={objForm.formState.errors.size?.message}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid
+              xs={12}
+              item
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                cursor: "pointer",
+              }}
+            >
+              {images &&
+                images?.map((img: any, index: number) => (
+                  <Grid item xs={3} key={index}>
+                    <Card style={{ maxWidth: "160px", padding: "5px" }}>
+                      <CardActions
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "end",
+                        }}
+                      >
+                        <CancelRoundedIcon
+                          onClick={() => removeImage(index)}
+                          color="error"
+                        />
+                      </CardActions>
+                      <img src={img.base64} height={100} width={"100%"} />
+                    </Card>
+                  </Grid>
+                ))}
+            </Grid>
+            <Grid item xs={12} marginBottom={7}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 7,
+                }}
+              >
+                <Typography variant="inherit" color={"black"}>
+                  Brand Details
+                </Typography>
+                <Controller
+                  name="brandDetails"
+                  control={objForm.control}
+                  // defaultValue={objAbout?.section1 ? objAbout?.section1 : ""}
+                  rules={{ required: true }} 
+                  render={({ field }) => <RichTextEditor field={field} />}
+                />
+              </div>
+            </Grid>
+
+            {/* <Grid item xs={6}>
               <Autocomplete
                 size="small"
                 multiple
@@ -309,7 +453,7 @@ export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
                 getOptionLabel={(option: any) => option.colorName || ""}
                 filterSelectedOptions
                 value={Array.isArray(selectColor) ? selectColor : []}
-                onChange={(_, data) => {
+                onChange={(_, data: any) => {
                   setSelectColor(data || []);
                   objForm.setValue("color", data || []);
                   objForm.clearErrors("color");
@@ -349,85 +493,12 @@ export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
                   />
                 )}
               />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                autoFocus
-                margin="dense"
-                size="small"
-                id="name"
-                label="Price"
-                type="number"
-                fullWidth
-                variant="outlined"
-                {...objForm.register("price")}
-                error={objForm.formState.errors.price ? true : false}
-                defaultValue={ObjProduct?.price}
-                helperText={
-                  objForm.formState.errors.price && (
-                    <span style={{ color: "red" }}>
-                      {"number is required dield"}
-                    </span>
-                  )
-                }
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <Button
-                component="label"
-                role={undefined}
-                variant="contained"
-                tabIndex={-1}
-                startIcon={<CloudUploadIcon />}
-              >
-                select Multiple Image
-                <VisuallyHiddenInput
-                  type="file"
-                  onChange={handleFileInputChange}
-                  multiple
-                />
-              </Button>
-              {objForm.formState.errors.images && (
-                <FormHelperText style={{ color: "red" }}>
-                  {objForm.formState.errors.images.message}
-                </FormHelperText>
-              )}
-            </Grid>
-            <Grid
-              xs={12}
-              item
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                cursor: "pointer",
-              }}
-            >
-              {images &&
-                images?.map((img: any, index: number) => (
-                  <Grid item xs={3} key={index}>
-                    <Card style={{ maxWidth: "160px", padding: "5px" }}>
-                      <CardActions
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "end",
-                        }}
-                      >
-                        <CancelRoundedIcon
-                          onClick={() => removeImage(index)}
-                          color="error"
-                        />
-                      </CardActions>
-                      <img src={img.base64} height={100} width={"100%"} />
-                    </Card>
-                  </Grid>
-                ))}
-            </Grid>
+            </Grid> */}
           </Grid>
           <DialogActions>
             <Button onClick={() => setOpen(false)}>Cancel</Button>
             <LoadingButton
-              color="secondary"
+              color="primary"
               type="submit"
               loading={false}
               loadingPosition="start"

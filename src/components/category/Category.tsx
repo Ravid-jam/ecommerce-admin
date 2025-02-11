@@ -2,14 +2,14 @@ import React from "react";
 import Swal from "sweetalert2";
 import DataTable from "../common/DataTable";
 import Message from "../common/massage/Message";
+import { formatDate } from "../common/utils";
 import { setSuccess, store } from "../services/pulState/store";
 import {
   useCategoryList,
   useDeleteCategory,
 } from "../services/query/ApiHandlerQuery";
-import AddUpdateCategory from "./AddUpdateCategory";
 import ICategory from "../types/category";
-
+import AddUpdateCategory from "./AddUpdateCategory";
 export default function Category() {
   const [open, setOpen] = React.useState(false);
   const [ObjCategory, setObjCategory] = React.useState<ICategory>();
@@ -49,7 +49,6 @@ export default function Category() {
       });
     }
   }
-
   return (
     <div>
       <div style={{ marginLeft: "50px", marginRight: "50px" }}>
@@ -64,20 +63,30 @@ export default function Category() {
             columns={[
               {
                 title: "Image",
-                field: "categoryImage",
-                render: (item: ICategory) => (
-                  <div style={{ height: "70px", width: "70px" }}>
-                    <img
-                      src={item.categoryImage}
-                      height={"100%"}
-                      width={"100%"}
-                      style={{ objectFit: "contain" }}
-                    />
-                  </div>
+                field: "image",
+                render: (item: any) => (
+                  console.log(item),
+                  (
+                    <div style={{ height: "70px", width: "70px" }}>
+                      <img
+                        src={item?.image?.url}
+                        height={"100%"}
+                        width={"100%"}
+                        style={{ objectFit: "contain" }}
+                      />
+                    </div>
+                  )
                 ),
               },
-              { title: "Title", field: "categoryTitle" },
-              { title: "Date", field: "Date" },
+              { title: "Title", field: "name" },
+              { title: "Status", field: "status" },
+              {
+                title: "Date",
+                field: "createdAt",
+                render: (item: ICategory) => (
+                  <span>{formatDate(item.createdAt)}</span>
+                ),
+              },
             ]}
             data={list.data}
             setDeleteId={deleteCategoryData}

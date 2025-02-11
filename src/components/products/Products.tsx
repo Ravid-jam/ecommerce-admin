@@ -26,7 +26,7 @@ export default function Products() {
         confirmButtonText: "Delete",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          const res = await ApiServices.deleteCategory(_id);
+          const res = await ApiServices.deleteProduct(_id);
           Swal.fire(
             "Deleted!",
             `${res.message ? res.message : "Category Deleted"}`,
@@ -46,7 +46,7 @@ export default function Products() {
 
   return (
     <div>
-      <div style={{ marginLeft: "50px", marginRight: "50px" }}>
+      <div style={{ marginLeft: "20px", marginRight: "50px" }}>
         <Message
           open={isSuccess}
           setOpen={setSuccess}
@@ -63,13 +63,16 @@ export default function Products() {
                   return (
                     <img
                       src={image?.images?.[0]?.url}
-                      height={150}
-                      width={150}
+                      height={100}
+                      width={100}
                     />
                   );
                 },
               },
               { title: "Title", field: "title" },
+              { title: "Category", field: "category" },
+              { title: "Price", field: "price" },
+              { title: "Stock", field: "stock" },
               { title: "Date", field: "Date" },
             ]}
             data={list.data}
@@ -82,7 +85,7 @@ export default function Products() {
           />
         </div>
       </div>
-      {open && (
+      {/* {open && (
         <AddUpdateProduct
           open={open}
           setOpen={() => {
@@ -93,7 +96,7 @@ export default function Products() {
           setIsEdit={setIsEdit}
           ObjProduct={ObjProduct}
         />
-      )}
+      )} */}
     </div>
   );
 }

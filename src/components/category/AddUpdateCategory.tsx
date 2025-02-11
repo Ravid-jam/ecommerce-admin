@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import * as yup from "yup";
 import CommonModel from "../common/CommonModel";
+import SelectField from "../common/SelectField";
 import TextInput from "../common/TextInput";
 import {
   setIsLoading,
@@ -25,14 +26,16 @@ import {
 import ICategory from "../types/category";
 
 export interface IFormCategory {
-  categoryTitle: string;
-  categoryImage: string;
+  name: string;
+  status: string;
+  image: string;
 }
 
 const schema = yup
   .object({
-    categoryTitle: yup.string().required(),
-    categoryImage: yup.string().required(),
+    name: yup.string().required(),
+    status: yup.string().required(),
+    image: yup.string().required(),
   })
   .required();
 
@@ -44,19 +47,20 @@ interface IAddUpdateCarouselProps {
   setIsEdit: (data: boolean) => void;
 }
 
+const data = [
+  { value: "ACTIVE", label: "ACTIVE" },
+  { value: "INACTIVE", label: "INACTIVE" },
+];
+
 export default function AddUpdateCategory(props: IAddUpdateCarouselProps) {
   const { open, setOpen, ObjCategory, isEdit } = props;
   const isLoading = store.useState((s) => s.isLoading);
   const [image, setImage] = React.useState<any>({
-    url: ObjCategory?.categoryImage ? ObjCategory.categoryImage : "",
+    url: ObjCategory?.image ? ObjCategory?.image : "",
   });
 
   const objForm = useForm<IFormCategory>({
     resolver: yupResolver(schema),
-    defaultValues: {
-      categoryImage: ObjCategory?.categoryImage,
-      categoryTitle: ObjCategory?.categoryTitle,
-    },
   });
 
   const convertToBase64 = (file: any) => {
@@ -78,13 +82,13 @@ export default function AddUpdateCategory(props: IAddUpdateCarouselProps) {
     const base64 = await convertToBase64(file);
     setImage({
       ...image,
-      url: base64 ? base64 : ObjCategory?.categoryImage,
+      url: base64 ? base64 : ObjCategory,
     });
-    objForm.setValue("categoryImage", file.name);
+    objForm.setValue("image", file.name);
   };
 
   const onSubmit = async (data: any) => {
-    const result = { ...data, categoryImage: image.url };
+    const result = { ...data, image: image.url };
     try {
       if (isEdit) {
         setIsLoading(true);
@@ -104,6 +108,7 @@ export default function AddUpdateCategory(props: IAddUpdateCarouselProps) {
       }
     } catch (error: any) {
       setOpen(false);
+      setIsLoading(false);
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -111,6 +116,16 @@ export default function AddUpdateCategory(props: IAddUpdateCarouselProps) {
       });
     }
   };
+
+  React.useEffect(() => {
+    if (ObjCategory?.status) {
+      objForm.reset({
+        status: ObjCategory.status,
+        image: ObjCategory.image?.url,
+        name: ObjCategory.name,
+      });
+    }
+  }, [ObjCategory]);
 
   return (
     <div>
@@ -123,42 +138,39 @@ export default function AddUpdateCategory(props: IAddUpdateCarouselProps) {
         setOpen={setOpen}
       >
         <form onSubmit={objForm.handleSubmit(onSubmit)}>
-          <Grid container rowSpacing={3} columnGap={10}>
+          <Grid
+            container
+            rowSpacing={4}
+            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+          >
             <Grid item xs={12}>
-              {/* <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Name"
-                type="text"
-                fullWidth
-                size="small"
-                variant="outlined"
-                {...objForm.register("categoryTitle")}
-                error={objForm.formState.errors.categoryTitle ? true : false}
-                helperText={
-                  <span style={{ color: "red" }}>
-                    {objForm.formState.errors.categoryTitle?.message}
-                  </span>
-                }
-              /> */}
               <TextInput
                 label="Name"
                 type="text"
                 fullWidth
                 variant="outlined"
-                size="small"
-                {...objForm.register("categoryTitle")}
-                error={objForm.formState.errors.categoryTitle ? true : false}
+                {...objForm.register("name")}
+                error={objForm.formState.errors.name ? true : false}
                 helperText={
                   <span style={{ color: "red" }}>
-                    {objForm.formState.errors.categoryTitle?.message}
+                    {objForm.formState.errors.name?.message}
                   </span>
                 }
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={6}>
+              <SelectField
+                options={data}
+                label="Status"
+                defaultValue={ObjCategory?.status || ""}
+                {...objForm.register("status")}
+                error={objForm.formState.errors.status ? true : false}
+                helperText={objForm.formState.errors.status?.message}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
               <label htmlFor="change-cover">
                 <TextField
                   id="change-cover"
@@ -174,11 +186,11 @@ export default function AddUpdateCategory(props: IAddUpdateCarouselProps) {
                   Select Image
                 </Button>
               </label>
-              {objForm.formState.errors.categoryImage && !image.url && (
+              {objForm.formState.errors.image && !image.url && (
                 <span
                   style={{ color: "red", marginLeft: "20px", fontSize: "12px" }}
                 >
-                  {objForm.formState.errors.categoryImage.message}
+                  {objForm.formState.errors.image.message}
                 </span>
               )}
               {image.url && (
@@ -195,7 +207,7 @@ export default function AddUpdateCategory(props: IAddUpdateCarouselProps) {
                     }}
                   >
                     <img
-                      src={image.url}
+                      src={image?.url?.url || image.url}
                       style={{
                         objectFit: "fill",
                         height: "150px",

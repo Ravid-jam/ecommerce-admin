@@ -45,6 +45,21 @@ class HttpService {
     }
     return result;
   }
+  static async delete(url: string, token?: string) {
+    let headers: any = {};
+    if (token) headers.Authorization = token;
+
+    let intermidateRes = await fetch(url, {
+      headers,
+      method: "DELETE",
+    });
+    let result = await intermidateRes.json();
+
+    if (!result.status) {
+      throw new Error(result.message);
+    }
+    return result;
+  }
 }
 
 export default HttpService;

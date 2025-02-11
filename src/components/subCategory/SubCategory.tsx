@@ -7,7 +7,8 @@ import {
 } from "@/components/services/query/ApiHandlerQuery";
 import React from "react";
 import Swal from "sweetalert2";
-import ISubCategory from "../../types/category";
+import { formatDate } from "../common/utils";
+import ISubCategory from "../types/category";
 import AddUpdateCategory from "./AddUpdateSubCategory";
 
 export default function SubCategory() {
@@ -48,7 +49,7 @@ export default function SubCategory() {
       });
     }
   }
-
+  console.log(list.data);
   return (
     <div>
       <div style={{ marginLeft: "50px", marginRight: "50px" }}>
@@ -63,11 +64,11 @@ export default function SubCategory() {
             columns={[
               {
                 title: "Image",
-                field: "subCategoryImage",
+                field: "image",
                 render: (item: ISubCategory) => (
                   <div style={{ height: "70px", width: "70px" }}>
                     <img
-                      src={item.subCategoryImage}
+                      src={item?.image?.url}
                       height={"100%"}
                       width={"100%"}
                       style={{ objectFit: "contain" }}
@@ -75,8 +76,15 @@ export default function SubCategory() {
                   </div>
                 ),
               },
-              { title: "Title", field: "subCategoryTitle" },
-              { title: "Date", field: "Date" },
+              { title: "Title", field: "name" },
+              { title: "Status", field: "status" },
+              {
+                title: "Date",
+                field: "createdAt",
+                render: (item: ISubCategory) => (
+                  <span>{formatDate(item.createdAt)}</span>
+                ),
+              },
             ]}
             data={list.data}
             setDeleteId={deleteSubCategoryData}

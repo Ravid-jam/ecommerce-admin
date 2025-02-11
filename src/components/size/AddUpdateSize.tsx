@@ -99,7 +99,7 @@ export default function AddUpdateSize(props: IAddUpdateSizeProps) {
           <DialogActions>
             <Button onClick={() => setOpen(false)}>Cancel</Button>
             <LoadingButton
-              color="secondary"
+              color="primary"
               type="submit"
               loading={isLoading}
               loadingPosition="start"

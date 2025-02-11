@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
+import "react-quill/dist/quill.snow.css";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 const queryClient = new QueryClient();
