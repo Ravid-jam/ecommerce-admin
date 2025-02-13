@@ -42,7 +42,7 @@ export default function Login() {
     try {
       setIsLoading(true);
       let res = await fetch(
-        "https://ecommerce-rest-api-y2lw.onrender.com/auth/login",
+        "https://ecommerce-backend-seven-sand.vercel.app/auth/login",
         {
           method: "POST",
           headers: {
