@@ -44,7 +44,6 @@ interface IAddUpdateCarouselProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   ObjCategory?: ICategory;
   isEdit?: boolean;
-  setIsEdit: (data: boolean) => void;
 }
 
 const data = [

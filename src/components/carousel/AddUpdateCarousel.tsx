@@ -40,11 +40,10 @@ interface IAddUpdateCarouselProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   objCarousel?: ICarousel;
   isEdit?: boolean;
-  setIsEdit: (data: boolean) => void;
 }
 
 export default function AddUpdateCarousel(props: IAddUpdateCarouselProps) {
-  const { open, setOpen, objCarousel, isEdit, setIsEdit } = props;
+  const { open, setOpen, objCarousel, isEdit } = props;
   const isLoading = store.useState((s) => s.isLoading);
   const [image, setImage] = React.useState<any>({
     url: objCarousel?.imageUrl ? objCarousel.imageUrl : "",

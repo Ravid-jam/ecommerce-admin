@@ -18,6 +18,7 @@ import * as yup from "yup";
 import TextInput from "../common/TextInput";
 import AuthServices from "../services/AuthServices";
 import { setUserData } from "../services/pulState/store";
+import config from "../config";
 const schema = yup
   .object({
     email: yup.string().required(),
@@ -41,7 +42,7 @@ export default function Login() {
   const onSubmit = async (data: loginData) => {
     try {
       setIsLoading(true);
-      let res = await fetch("http://localhost:5000/auth/login", {
+      let res = await fetch(`${config.API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

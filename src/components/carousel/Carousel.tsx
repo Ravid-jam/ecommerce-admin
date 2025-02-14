@@ -91,7 +91,6 @@ export default function Carousel() {
             list.refetch();
           }}
           isEdit={isEdit}
-          setIsEdit={setIsEdit}
           objCarousel={objCarousel}
         />
       )}

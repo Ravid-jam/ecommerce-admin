@@ -75,7 +75,7 @@ export default function RichTextEditor(props: IRichTextEditerProps) {
         value={props.field.value}
         onChange={(content: any) => props.field.onChange(content)}
         style={{
-          height: "200px",
+          minHeight: "200px",
         }}
         formats={formats}
         modules={modules}

@@ -102,7 +102,6 @@ export default function Category() {
             list.refetch();
           }}
           isEdit={isEdit}
-          setIsEdit={setIsEdit}
           ObjCategory={ObjCategory}
         />
       )}

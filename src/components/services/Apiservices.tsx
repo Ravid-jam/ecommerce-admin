@@ -179,7 +179,7 @@ class ApiServices {
 
   static async addProduct(data?: IProducts) {
     let res = await HttpService.post(
-      `${config.API_URL}/api/addProduct`,
+      `${config.API_URL}/api/product/addProduct`,
       data,
       localStorage.token
     );
@@ -188,7 +188,7 @@ class ApiServices {
 
   static async updateProduct(data?: IProducts, _id?: string) {
     let res = await HttpService.put(
-      `${config.API_URL}/api/updateProduct/${_id}`,
+      `${config.API_URL}/api/product/updateProduct/${_id}`,
       data,
       localStorage.token
     );
@@ -196,8 +196,8 @@ class ApiServices {
   }
 
   static async deleteProduct(_id: string) {
-    let res = await HttpService.get(
-      `${config.API_URL}/api/deleteProduct/${_id}`,
+    let res = await HttpService.delete(
+      `${config.API_URL}/api/product/deleteProduct/${_id}`,
       localStorage.token
     );
     return res;

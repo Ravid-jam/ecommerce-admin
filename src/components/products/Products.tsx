@@ -6,6 +6,9 @@ import ApiServices from "../services/Apiservices";
 import { setSuccess, store } from "../services/pulState/store";
 import { useProductList } from "../services/query/ApiHandlerQuery";
 import AddUpdateProduct from "./AddUpdateProduct";
+import IProducts from "../types/products";
+import { formatDate } from "../common/utils";
+import { Tooltip } from "@mui/material";
 
 export default function Products() {
   const [open, setOpen] = React.useState(false);
@@ -69,11 +72,46 @@ export default function Products() {
                   );
                 },
               },
-              { title: "Title", field: "title" },
-              { title: "Category", field: "category" },
-              { title: "Price", field: "price" },
+              {
+                title: "Title",
+                field: "title",
+                render: (rowData: any) => (
+                  <Tooltip
+                    title={
+                      <span style={{ fontSize: "0.9rem", fontWeight: "bold" }}>
+                        {rowData.title}
+                      </span>
+                    }
+                    arrow
+                    placement="top"
+                  >
+                    <div
+                      style={{
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 2,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth: "200px",
+                        whiteSpace: "normal",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {rowData.title}
+                    </div>
+                  </Tooltip>
+                ),
+              },
+              { title: "Category", field: "category.name" },
+              { title: "Price", field: "totalPrice" },
               { title: "Stock", field: "stock" },
-              { title: "Date", field: "Date" },
+              {
+                title: "Date",
+                field: "createdAt",
+                render: (item: any) => (
+                  <span>{formatDate(item.createdAt)}</span>
+                ),
+              },
             ]}
             data={list.data}
             setDeleteId={deleteProductsData}
@@ -93,7 +131,6 @@ export default function Products() {
             list.refetch();
           }}
           isEdit={isEdit}
-          setIsEdit={setIsEdit}
           ObjProduct={ObjProduct}
         />
       )}
