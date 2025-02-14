@@ -264,13 +264,13 @@ export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
                 <Typography variant="inherit" color={"black"}>
                   Product Details
                 </Typography>
-                <Controller
+                {/* <Controller
                   name="brandDetails"
                   control={objForm.control}
                   // defaultValue={objAbout?.section1 ? objAbout?.section1 : ""}
                   rules={{ required: true }} // Apply validation rules
                   render={({ field }) => <RichTextEditor field={field} />}
-                />
+                /> */}
               </div>
             </Grid>
             <Grid item xs={6}>
@@ -431,13 +431,13 @@ export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
                 <Typography variant="inherit" color={"black"}>
                   Brand Details
                 </Typography>
-                <Controller
+                {/* <Controller
                   name="brandDetails"
                   control={objForm.control}
                   // defaultValue={objAbout?.section1 ? objAbout?.section1 : ""}
                   rules={{ required: true }}
                   render={({ field }) => <RichTextEditor field={field} />}
-                />
+                /> */}
               </div>
             </Grid>
 
