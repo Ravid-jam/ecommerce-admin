@@ -49,7 +49,6 @@ export default function SubCategory() {
       });
     }
   }
-  console.log(list.data);
   return (
     <div>
       <div style={{ marginLeft: "50px", marginRight: "50px" }}>

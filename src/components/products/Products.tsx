@@ -85,7 +85,7 @@ export default function Products() {
           />
         </div>
       </div>
-      {/* {open && (
+      {open && (
         <AddUpdateProduct
           open={open}
           setOpen={() => {
@@ -96,7 +96,7 @@ export default function Products() {
           setIsEdit={setIsEdit}
           ObjProduct={ObjProduct}
         />
-      )} */}
+      )}
     </div>
   );
 }

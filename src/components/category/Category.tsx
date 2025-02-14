@@ -32,7 +32,6 @@ export default function Category() {
       }).then(async (result) => {
         if (result.isConfirmed) {
           const res = await useDeleteCategory(_id);
-          console.log(res);
           Swal.fire(
             "Deleted!",
             `${res.message ? res.message : "Category Deleted"}`,
@@ -65,17 +64,14 @@ export default function Category() {
                 title: "Image",
                 field: "image",
                 render: (item: any) => (
-                  console.log(item),
-                  (
-                    <div style={{ height: "70px", width: "70px" }}>
-                      <img
-                        src={item?.image?.url}
-                        height={"100%"}
-                        width={"100%"}
-                        style={{ objectFit: "contain" }}
-                      />
-                    </div>
-                  )
+                  <div style={{ height: "70px", width: "70px" }}>
+                    <img
+                      src={item?.image?.url}
+                      height={"100%"}
+                      width={"100%"}
+                      style={{ objectFit: "contain" }}
+                    />
+                  </div>
                 ),
               },
               { title: "Title", field: "name" },

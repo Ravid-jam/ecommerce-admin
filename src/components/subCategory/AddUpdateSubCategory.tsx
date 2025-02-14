@@ -82,7 +82,6 @@ export default function AddUpdateSubCategory(props: IAddUpdateCarouselProps) {
       };
     });
   };
-  console.log(objForm.formState.errors);
   const handleFileUpload = async (e: any) => {
     const file = e.target.files[0];
 

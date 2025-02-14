@@ -15,7 +15,6 @@ export default function Color() {
   const [isEdit, setIsEdit] = React.useState<any>(false);
 
   const list = useColorList();
-
   const showSuccessMessage = store.useState((s) => s.successMessage);
   const isSuccess = store.useState((s) => s.isSuccess);
 
@@ -31,7 +30,6 @@ export default function Color() {
       }).then(async (result) => {
         if (result.isConfirmed) {
           const res = await useDeleteColor(_id);
-          console.log(res);
           Swal.fire(
             "Deleted!",
             `${res.message ? res.message : "Color Deleted"}`,
@@ -74,12 +72,11 @@ export default function Color() {
                       backgroundColor: `${item.colorCode} `,
                       width: "30px",
                       height: "30px",
-                      border: "1px solid white",
+                      border: "1px solid gray",
                     }}
                   ></div>
                 ),
               },
-              { title: "Date", field: "Date" },
             ]}
             data={list.data}
             setDeleteId={deleteColorData}

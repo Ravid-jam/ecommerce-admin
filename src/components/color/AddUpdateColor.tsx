@@ -52,7 +52,13 @@ export default function AddUpdateColor(props: IAddUpdateColorProps) {
     try {
       if (isEdit) {
         setIsLoading(true);
-        const edit = await useUpdateColor(data, ObjColor?._id);
+        const edit = await useUpdateColor(
+          {
+            colorName: data.colorName,
+            colorCode: data.colorCode,
+          },
+          ObjColor?._id
+        );
         setIsLoading(false);
 
         setOpen(false);

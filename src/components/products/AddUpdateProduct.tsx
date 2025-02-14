@@ -157,7 +157,6 @@ export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
   }, []);
 
   const onSubmit = async (data: any) => {
-    console.log(data);
     // try {
     //   if (isEdit) {
     //     setIsLoading(true);
@@ -185,8 +184,6 @@ export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
   };
 
   const categoryValue = objForm.watch("category");
-  console.log(objForm.formState.errors);
-  console.log(categoryValue);
   return (
     <div>
       <CommonModel
@@ -438,7 +435,7 @@ export default function AddUpdateProduct(props: IAddUpdateCarouselProps) {
                   name="brandDetails"
                   control={objForm.control}
                   // defaultValue={objAbout?.section1 ? objAbout?.section1 : ""}
-                  rules={{ required: true }} 
+                  rules={{ required: true }}
                   render={({ field }) => <RichTextEditor field={field} />}
                 />
               </div>

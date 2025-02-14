@@ -55,9 +55,6 @@ class HttpService {
     });
     let result = await intermidateRes.json();
 
-    if (!result.status) {
-      throw new Error(result.message);
-    }
     return result;
   }
 }

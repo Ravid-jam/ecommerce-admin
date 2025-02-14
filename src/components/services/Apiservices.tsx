@@ -27,7 +27,7 @@ class ApiServices {
 
   static async addColor(data?: IColor) {
     let res = await HttpService.post(
-      `${config.API_URL}/api/addColor`,
+      `${config.API_URL}/api/color/addColor`,
       data,
       localStorage.token
     );
@@ -36,7 +36,7 @@ class ApiServices {
 
   static async getLstColor() {
     let res = await HttpService.get(
-      `${config.API_URL}/api/getColors`,
+      `${config.API_URL}/api/color/getAllColors`,
       localStorage.token
     );
     return res.data;
@@ -44,7 +44,7 @@ class ApiServices {
 
   static async updateColor(data?: IColor, _id?: string) {
     let res = await HttpService.put(
-      `${config.API_URL}/api/updateColor/${_id}`,
+      `${config.API_URL}/api/color/updateColor/${_id}`,
       data,
       localStorage.token
     );
@@ -52,8 +52,8 @@ class ApiServices {
   }
 
   static async deleteColor(_id?: string) {
-    let res = await HttpService.get(
-      `${config.API_URL}/api/deleteColor/${_id}`,
+    let res = await HttpService.delete(
+      `${config.API_URL}/api/color/deleteColor/${_id}`,
       localStorage.token
     );
     return res;
@@ -137,7 +137,7 @@ class ApiServices {
 
   static async getLstSize() {
     let res = await HttpService.get(
-      `${config.API_URL}/api/getSize`,
+      `${config.API_URL}/api/size/getAllSize`,
       localStorage.token
     );
     return res.data;
@@ -145,7 +145,7 @@ class ApiServices {
 
   static async addSize(data?: ISize) {
     let res = await HttpService.post(
-      `${config.API_URL}/api/addSize`,
+      `${config.API_URL}/api/size/addSize`,
       data,
       localStorage.token
     );
@@ -154,7 +154,7 @@ class ApiServices {
 
   static async updateSize(data?: ISize, _id?: string) {
     let res = await HttpService.put(
-      `${config.API_URL}/api/updateSize/${_id}`,
+      `${config.API_URL}/api/size/updateSize/${_id}`,
       data,
       localStorage.token
     );
@@ -162,8 +162,8 @@ class ApiServices {
   }
 
   static async deleteSize(_id?: string) {
-    let res = await HttpService.get(
-      `${config.API_URL}/api/deleteSize/${_id}`,
+    let res = await HttpService.delete(
+      `${config.API_URL}/api/size/deleteSize/${_id}`,
       localStorage.token
     );
     return res;
